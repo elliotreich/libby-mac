@@ -5,11 +5,14 @@ struct TranscriptPanel: View {
     @ObservedObject var transcript: TranscriptManager
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text("Transcript (Beta)")
-                    .font(.headline)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(.white)
+
                 Spacer()
+
                 Button(transcript.isListening ? "Stop" : "Start") {
                     Task {
                         if !transcript.isListening {
@@ -18,16 +21,18 @@ struct TranscriptPanel: View {
                         transcript.toggleListening()
                     }
                 }
+                .font(.system(size: 11, weight: .medium))
                 .buttonStyle(.borderedProminent)
+                .tint(transcript.isListening ? .red : .blue)
             }
 
             Text("Uses your microphone to capture currently audible speech. Not an official Libby transcript.")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                .font(.system(size: 10))
+                .foregroundColor(.white.opacity(0.4))
 
             Text(transcript.status)
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                .font(.system(size: 10))
+                .foregroundColor(.white.opacity(0.5))
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 4) {
@@ -36,11 +41,14 @@ struct TranscriptPanel: View {
                             Button(format(seconds: line.secondsFromStart)) {
                                 webModel.rewind(seconds: 10)
                             }
-                            .font(.caption.monospacedDigit())
-                            .buttonStyle(.borderless)
+                            .font(.system(size: 9, weight: .medium, design: .monospaced))
+                            .foregroundColor(.white.opacity(0.5))
+                            .buttonStyle(.plain)
+                            .help("Rewind 10s to this point")
 
                             Text(line.text)
-                                .font(.caption)
+                                .font(.system(size: 11))
+                                .foregroundColor(.white.opacity(0.85))
                                 .textSelection(.enabled)
                             Spacer()
                         }
@@ -48,7 +56,7 @@ struct TranscriptPanel: View {
                 }
             }
         }
-        .padding(.horizontal, 10)
+        .padding(.horizontal, 12)
         .padding(.bottom, 10)
     }
 

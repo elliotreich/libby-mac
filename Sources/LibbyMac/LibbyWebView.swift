@@ -59,8 +59,14 @@ final class WebViewModel: NSObject, ObservableObject {
     }
 
     func updateNavState(_ webView: WKWebView) {
-        canGoBack = webView.canGoBack
-        canGoForward = webView.canGoForward
+        let newCanGoBack = webView.canGoBack
+        let newCanGoForward = webView.canGoForward
+        // Guard against redundant writes: an unconditional @Published write
+        // here (even to an equal value) fires objectWillChange, which can
+        // retrigger SwiftUI's body evaluation -> updateNSView -> this method
+        // again, spinning the main thread in an infinite render loop.
+        if canGoBack != newCanGoBack { canGoBack = newCanGoBack }
+        if canGoForward != newCanGoForward { canGoForward = newCanGoForward }
     }
 }
 
@@ -89,7 +95,11 @@ struct LibbyWebView: NSViewRepresentable {
     }
 
     func updateNSView(_ webView: WKWebView, context: Context) {
-        model.bind(webView)
+        // Intentionally a no-op. `bind` runs once from `makeNSView`; calling
+        // it again here (as the previous version did) writes @Published
+        // navigation state on every SwiftUI diff pass, which retriggers a
+        // diff pass, which calls this again -- an infinite render loop that
+        // pins the main thread (this was the cause of the app hanging).
     }
 
     final class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate {

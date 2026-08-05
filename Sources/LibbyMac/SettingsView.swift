@@ -3,7 +3,7 @@ import SwiftUI
 struct SettingsView: View {
     @ObservedObject var transcript: TranscriptManager
     @ObservedObject var hotkeys: HotKeyManager
-    @StateObject private var settings = SettingsStore()
+    @ObservedObject var settings: SettingsStore
 
     var body: some View {
         Form {

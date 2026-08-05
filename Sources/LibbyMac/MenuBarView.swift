@@ -3,7 +3,7 @@ import SwiftUI
 struct MenuBarView: View {
     @ObservedObject var webModel: WebViewModel
     @ObservedObject var transcript: TranscriptManager
-    @StateObject private var settings = SettingsStore()
+    @ObservedObject var settings: SettingsStore
 
     var body: some View {
         VStack(spacing: 0) {
